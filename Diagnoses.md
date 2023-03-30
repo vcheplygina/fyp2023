@@ -16,3 +16,6 @@ All BCC, SCC, and MEL are biopsy-proven. The remaining ones may have clinical di
 # Is there some missing data? Are there images of low quality? Etc
 
 From the metadata one can see, that some cells are empty. We can't say why this happend, but we can assume that people didn't want to give permission on gathering of a specific data.
+
+
+# You can select a small (e.g. 100) subset images to focus on at the start. The only requirement is that there are at least two categories of images.
