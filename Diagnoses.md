@@ -19,3 +19,10 @@ From the metadata one can see, that some cells are empty. We can't say why this 
 
 
 # You can select a small (e.g. 100) subset images to focus on at the start. The only requirement is that there are at least two categories of images.
+
+
+# Assymetry and Color 
+
+- `Melanoma`:
+    Six suspicious shades of color: white, red, light brown, dark brown, blue-gray, and black.
+    larger than 6mm
