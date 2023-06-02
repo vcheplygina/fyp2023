@@ -483,7 +483,6 @@ def make_csv_features(path):
 
   df.to_csv(os.path.join(path, "output.csv"))
 
-<<<<<<< HEAD
 
 def do_metadata_segm(data):
   path = os.path.join(os.getcwd(),"imgs_part_1")
@@ -494,12 +493,12 @@ def do_metadata_segm(data):
     img = io.imread(os.path.join(path, i))
     image = transform.resize(img, (200, 200), anti_aliasing=True)
 
-    do_segm(image)
-  
+    fig, ax = plt.subplots(1, 1)
+    ax[0].imshow(do_segm(image))
+
+    fig.savefig(os.path.join(os.getcwd(), "segmented_photos"))
 
 
-=======
->>>>>>> ec15cbad732b86c3d67454f66714adb7324a82f8
 
 def separate_data(arr):
   x = list()
@@ -686,7 +685,7 @@ def best_random_forest(arr, n_folds):
   
   rndF.fit(train_col, train_lab)
 
-  # joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
+  joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
 
   score_rndF = rndF.score(test_col, test_lab)
 
@@ -718,7 +717,58 @@ def best_random_forest(arr, n_folds):
   axs[6].set_xlabel(np.mean(result_rndF))
   
   
-  plt.show()
+  print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
+
+  return fig
+
+
+def regular_random_forest(arr, n_folds):
+  x, y = separate_data(arr)
+
+  x = np.array(x)
+  y = np.array(y)
+  
+  (train_col, test_col, train_lab, test_lab) = train_test_split(
+	x, y, test_size=0.25, random_state=42) 
+
+  kf = KFold(n_splits=n_folds)
+  
+  rndF = RandomForestClassifier()
+  result_rndF = cross_val_score(rndF, train_col, train_lab, cv=n_folds)
+  
+  rndF.fit(train_col, train_lab)
+
+  # joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
+
+  score_rndF = rndF.score(test_col, test_lab)
+
+  eval_rndF = evaluate(rndF, test_col, test_lab)
+
+  fig, axs = plt.subplots(2, 4, figsize=(12, 5))
+  axs = axs.flatten()
+
+  # Histogram for Average Error
+  axs[0].bar("Average Error", eval_rndF[0])
+  axs[0].set_title(eval_rndF[0])
+
+  axs[1].bar("Accuracy", eval_rndF[1])
+  axs[1].set_title(eval_rndF[1])
+
+  axs[2].bar("Precision", eval_rndF[2])
+  axs[2].set_title(eval_rndF[2])
+
+  axs[3].bar("F1 Score", eval_rndF[3])
+  axs[3].set_title(eval_rndF[3])
+
+  axs[4].bar("Recall", eval_rndF[4])
+  axs[4].set_xlabel(eval_rndF[4])
+
+  axs[5].bar("AUC", eval_rndF[5])
+  axs[5].set_xlabel(eval_rndF[5])
+
+  axs[6].bar("Cross-Validation", np.mean(result_rndF))
+  axs[6].set_xlabel(np.mean(result_rndF))
+  
   
   print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
 
@@ -906,13 +956,12 @@ arr_cor = build_datasample_asym()
 # best_random_forest(arr_cor, 10)
 # best_random_forest(arr_col, 10)
 
-best_random_forest(arr_col, 10)
+# best_random_forest(arr_col, 10)
 
 def make_figures_tables(path):
-  final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
-  final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
+  # final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
+  # final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
 
-<<<<<<< HEAD
   # make_csv_features(path)
   # select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
   best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col.png"))
@@ -920,15 +969,10 @@ def make_figures_tables(path):
 
   regular_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col_reg.png"))
   regular_random_forest(arr_cor, 10).savefig(os.path.join(path, "best_rndF_asym_reg.png"))
-=======
-  make_csv_features(path)
-  select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
-  best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col.png"))
-  best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_cor.png"))
->>>>>>> ec15cbad732b86c3d67454f66714adb7324a82f8
 
 
 make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
+
 
 def random_search_training(arr):
   x, y = separate_data(arr)
