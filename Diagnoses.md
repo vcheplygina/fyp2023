@@ -5,7 +5,7 @@
 ACK: Actinic Keratosis
 BCC: Basal Cell Carcinoma
 MEL: Melanoma
-NEV: Nevus
+NEV: Nevus  (healthy)
 SCC: Squamous Cell Carcinoma
 SEK: Seborrheic Keratosis
 
@@ -27,7 +27,7 @@ From the metadata one can see, that some cells are empty. We can't say why this 
     Six suspicious shades of color: white, red, light brown, dark brown, blue-gray, and black.
     larger than 6mm
 
-- 'Actinic Keratosis':
+- `Actinic Keratosis`:
     Color variations, including pink, red or brown. Tender or asymptomatic White or yellow; scaly, warty, or horny surface. Skin coloured, red, or pigmented. Rough, dry or scaly patch of skin, usually less than 1 inch (2.5 centimeters) in diameter.
 
 - 'Basal cell carcinoma':
