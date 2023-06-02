@@ -357,6 +357,113 @@ def try_grid_search(arr):
   
 
 def best_random_forest(arr, n_folds):
+  x, y = separate_data(arr)
+
+  x = np.array(x)
+  y = np.array(y)
+  
+  (train_col, test_col, train_lab, test_lab) = train_test_split(
+	x, y, test_size=0.25, random_state=42) 
+
+  kf = KFold(n_splits=n_folds)
+  
+  rndF = RandomForestClassifier(n_estimators = 1200, min_samples_split=5, min_samples_leaf=3, max_features='sqrt', max_depth=30, bootstrap=True)
+  result_rndF = cross_val_score(rndF, train_col, train_lab, cv=n_folds)
+  
+  rndF.fit(train_col, train_lab)
+
+  # joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
+
+  score_rndF = rndF.score(test_col, test_lab)
+
+  eval_rndF = evaluate(rndF, test_col, test_lab)
+
+  fig, axs = plt.subplots(2, 4, figsize=(12, 5))
+  axs = axs.flatten()
+
+  # Histogram for Average Error
+  axs[0].bar("Average Error", eval_rndF[0])
+  axs[0].set_title(eval_rndF[0])
+
+  axs[1].bar("Accuracy", eval_rndF[1])
+  axs[1].set_title(eval_rndF[1])
+
+  axs[2].bar("Precision", eval_rndF[2])
+  axs[2].set_title(eval_rndF[2])
+
+  axs[3].bar("F1 Score", eval_rndF[3])
+  axs[3].set_title(eval_rndF[3])
+
+  axs[4].bar("Recall", eval_rndF[4])
+  axs[4].set_xlabel(eval_rndF[4])
+
+  axs[5].bar("AUC", eval_rndF[5])
+  axs[5].set_xlabel(eval_rndF[5])
+
+  axs[6].bar("Cross-Validation", np.mean(result_rndF))
+  axs[6].set_xlabel(np.mean(result_rndF))
+  
+  
+  print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
+
+  return fig
+
+
+def regular_random_forest(arr, n_folds):
+  x, y = separate_data(arr)
+
+  x = np.array(x)
+  y = np.array(y)
+  
+  (train_col, test_col, train_lab, test_lab) = train_test_split(
+	x, y, test_size=0.25, random_state=42) 
+
+  kf = KFold(n_splits=n_folds)
+  
+  rndF = RandomForestClassifier()
+  result_rndF = cross_val_score(rndF, train_col, train_lab, cv=n_folds)
+  
+  rndF.fit(train_col, train_lab)
+
+  # joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
+
+  score_rndF = rndF.score(test_col, test_lab)
+
+  eval_rndF = evaluate(rndF, test_col, test_lab)
+
+  fig, axs = plt.subplots(2, 4, figsize=(12, 5))
+  axs = axs.flatten()
+
+  # Histogram for Average Error
+  axs[0].bar("Average Error", eval_rndF[0])
+  axs[0].set_title(eval_rndF[0])
+
+  axs[1].bar("Accuracy", eval_rndF[1])
+  axs[1].set_title(eval_rndF[1])
+
+  axs[2].bar("Precision", eval_rndF[2])
+  axs[2].set_title(eval_rndF[2])
+
+  axs[3].bar("F1 Score", eval_rndF[3])
+  axs[3].set_title(eval_rndF[3])
+
+  axs[4].bar("Recall", eval_rndF[4])
+  axs[4].set_xlabel(eval_rndF[4])
+
+  axs[5].bar("AUC", eval_rndF[5])
+  axs[5].set_xlabel(eval_rndF[5])
+
+  axs[6].bar("Cross-Validation", np.mean(result_rndF))
+  axs[6].set_xlabel(np.mean(result_rndF))
+  
+  
+  print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
+
+  return fig
+
+
+
+
 
 
 final_data = select_data(make_df())
@@ -364,11 +471,27 @@ final_data = select_data(make_df())
 arr_col = build_datasample_new()
 arr_asym = build_datasample_asym_new()
 
+#Training all the models on color features and outputting the eveluation of each model
 
 #final_training(arr_col, 10)
+
+#Training all the models on assymetry features and outputting the eveluation of each model
+
+
 #final_training(arr_asym, 10)
 
+#Doig random search for a region where the hyperparameters for the random forest model are the best fit. This takes a long time
 random_search_training(arr_col)
+
+#Tuning the hyperparameters found in random search with grid search. 
+
+try_grid_search(arr_col)
+
+
+
+
+#Running the best random forest for the tuned hyperparameters and evaluating it's scores
+best_random_forest(arr, 10)
 
 
 
