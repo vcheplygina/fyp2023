@@ -180,7 +180,8 @@ def img_segm(path, num):
 
 
 def make_df():
-  df = pd.read_csv("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\metadata.csv")
+  path = os.path.join(os.getcwd(), "metadata.csv")
+  df = pd.read_csv(path)
   new_df = df[["patient_id", "img_id", "diagnostic"]]
 
   new_df["healthy"] = np.where(new_df["diagnostic"] == "NEV", 1, 0) 
@@ -200,8 +201,8 @@ def select_data(new_df):
   return final_data
 
 
-df = select_data(make_df())
-print(df)
+#df = select_data(make_df())
+#print(df)
 
 
 def do_img_segmentation(df):
@@ -404,8 +405,7 @@ def build_datasample():
 
 
 def build_datasample_new():
-  path = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\segmented_photos"
-
+  path = os.path.join(os.getcwd(), "segmented_photos")
   arr = []
 
   for i in os.listdir(path):
@@ -855,7 +855,10 @@ def train_test_data(arr):
   plt.legend()
   plt.show()
 
-# arr_col = build_datasample()
+arr_col = build_datasample_new()
+arr_col = pd.DataFrame(arr_col)
+
+print(arr_col)
 # arr_cor = build_datasample_asym()
 # best_random_forest(arr_cor, 10)
 # best_random_forest(arr_col, 10)
