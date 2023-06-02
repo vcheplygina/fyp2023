@@ -180,7 +180,8 @@ def img_segm(path, num):
 
 
 def make_df():
-  df = pd.read_csv(os.path.join(os.getcwd(), "metadata.csv"))
+  path = os.path.join(os.getcwd(), "metadata.csv")
+  df = pd.read_csv(path)
   new_df = df[["patient_id", "img_id", "diagnostic"]]
 
   new_df["healthy"] = np.where(new_df["diagnostic"] == "NEV", 1, 0) 
@@ -200,8 +201,8 @@ def select_data(new_df):
   return final_data
 
 
-df = select_data(make_df())
-print(df)
+#df = select_data(make_df())
+#print(df)
 
 def do_img_segmentation(df):
 
@@ -215,20 +216,20 @@ def do_img_segmentation(df):
 
 
     if healthy_check.bool():
-      out_path = os.path.join(os.getcwd(), f"healthy\\{i}")
+      out_path = f"C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\healthy\\{i}"
       if not os.path.exists(out_path):
         segmented_img.savefig(out_path)
         plt.close()
     else:
-      out_path = os.path.join(os.getcwd(), f"unhealthy\\{i}")
+      out_path = f"C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\unhealthy\\{i}"
       if not os.path.exists(out_path):
         segmented_img.savefig(out_path)
         plt.close()
 
 
 def do_cleaning():
-    good = os.path.join(os.getcwd(), "good")
-    cancel = os.path.join(os.getcwd(), "cancel")
+    good = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\good"
+    cancel = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\cancel"
 
     entries = os.listdir(good)
     entries2 = os.listdir(cancel)
@@ -248,8 +249,8 @@ def delete_rows(final_data, entries):
 
 
 def change_photos():
-  photo_dir = os.path.join(os.getcwd(), "good")
-  source_dir = os.path.join(os.getcwd(), "imgs_part_1")
+  photo_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\good"
+  source_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\First Year Project (Second)\\imgs_part_1"
 
   old_photos = os.listdir(photo_dir)
 
@@ -264,7 +265,7 @@ def change_photos():
 
 
 def do_folder_segm():
-  photo_dir = os.path.join(os.getcwd(), "good")
+  photo_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\good"
   photos = os.listdir(photo_dir)
 
   for i in photos:
@@ -280,9 +281,9 @@ def sort_imgs():
   imgs_lst = df["img_id"].tolist()
 
 
-  photo_dir = os.path.join(os.getcwd(), "photo2")
-  healthy_dir = os.path.join(os.getcwd(), "healthy")
-  unheatlhy_dir = os.path.join(os.getcwd(), "unhealthy")
+  photo_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\photo2"
+  healthy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\healthy"
+  unheatlhy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\unhealthy"
 
   folder_imgs_lst = os.listdir(photo_dir)
 
@@ -404,7 +405,6 @@ def build_datasample():
 
 def build_datasample_new():
   path = os.path.join(os.getcwd(), "segmented_photos")
-
   arr = []
 
   for i in os.listdir(path):
@@ -483,23 +483,6 @@ def make_csv_features(path):
 
   df.to_csv(os.path.join(path, "output.csv"))
 
-<<<<<<< HEAD
-
-def do_metadata_segm(data):
-  path = os.path.join(os.getcwd(),"imgs_part_1")
-  images = final_data["img_id"].tolist()
-  segmented_imgs = []
-
-  for i in images:
-    img = io.imread(os.path.join(path, i))
-    image = transform.resize(img, (200, 200), anti_aliasing=True)
-
-    do_segm(image)
-  
-
-
-=======
->>>>>>> ec15cbad732b86c3d67454f66714adb7324a82f8
 
 def separate_data(arr):
   x = list()
@@ -901,8 +884,11 @@ def train_test_data(arr):
   plt.legend()
   plt.show()
 
-arr_col = build_datasample()
-arr_cor = build_datasample_asym()
+arr_col = build_datasample_new()
+arr_col = pd.DataFrame(arr_col)
+
+print(arr_col)
+# arr_cor = build_datasample_asym()
 # best_random_forest(arr_cor, 10)
 # best_random_forest(arr_col, 10)
 
@@ -912,20 +898,10 @@ def make_figures_tables(path):
   final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
   final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
 
-<<<<<<< HEAD
-  # make_csv_features(path)
-  # select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
-  best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col.png"))
-  best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_asym.png"))
-
-  regular_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col_reg.png"))
-  regular_random_forest(arr_cor, 10).savefig(os.path.join(path, "best_rndF_asym_reg.png"))
-=======
   make_csv_features(path)
   select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
   best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col.png"))
   best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_cor.png"))
->>>>>>> ec15cbad732b86c3d67454f66714adb7324a82f8
 
 
 make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
