@@ -685,7 +685,7 @@ def best_random_forest(arr, n_folds):
   
   rndF.fit(train_col, train_lab)
 
-  joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
+  # joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
 
   score_rndF = rndF.score(test_col, test_lab)
 
@@ -959,11 +959,11 @@ arr_cor = build_datasample_asym()
 # best_random_forest(arr_col, 10)
 
 def make_figures_tables(path):
-  # final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
-  # final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
+  final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
+  final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
 
-  # make_csv_features(path)
-  # select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
+  make_csv_features(path)
+  select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
   best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col.png"))
   best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_asym.png"))
 
