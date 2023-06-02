@@ -406,7 +406,7 @@ def best_random_forest(arr, n_folds):
   
   print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
 
-  return fig
+  return fig, eval_rndF, np.mean(result_rndF)
 
 
 def regular_random_forest(arr, n_folds):
@@ -459,7 +459,7 @@ def regular_random_forest(arr, n_folds):
   
   print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
 
-  return fig
+  return fig, eval_rndF, np.mean(result_rndF)
 
 
 
@@ -481,17 +481,155 @@ arr_asym = build_datasample_asym_new()
 #final_training(arr_asym, 10)
 
 #Doig random search for a region where the hyperparameters for the random forest model are the best fit. This takes a long time
-random_search_training(arr_col)
+# random_search_training(arr_col)
 
 #Tuning the hyperparameters found in random search with grid search. 
 
-try_grid_search(arr_col)
+# try_grid_search(arr_col)
+
+def build_datasample():
+  healthy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\healthy"
+  unheatlhy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\unhealthy"
+
+  arr = []
+
+  for i in os.listdir(healthy_dir):
+    image = io.imread(os.path.join(healthy_dir, i))
+    image = transform.resize(image, (200, 200), anti_aliasing=True)
+
+    arr.append(make_datasample(image, i))
+  
+  for i in os.listdir(unheatlhy_dir):
+    image = io.imread(os.path.join(unheatlhy_dir, i))
+    image = transform.resize(image, (200, 200), anti_aliasing=True)
+
+    arr.append(make_datasample(image, i))
+
+  np.random.shuffle(arr)
+  return arr
+
+
+def build_datasample_asym():
+  healthy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\healthy"
+  unheatlhy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\unhealthy"
+
+  arr = []
+
+  for i in os.listdir(healthy_dir):
+    image = io.imread(os.path.join(healthy_dir, i))
+    image = transform.resize(image, (200, 200), anti_aliasing=True)
+
+    arr.append(make_datasample_symetry(image, i))
+  
+  for i in os.listdir(unheatlhy_dir):
+    image = io.imread(os.path.join(unheatlhy_dir, i))
+    image = transform.resize(image, (200, 200), anti_aliasing=True)
+
+    arr.append(make_datasample_symetry(image, i))
+
+  np.random.shuffle(arr)
+  return arr
 
 
 
+arr_col = build_datasample()
+arr_cor = build_datasample_asym()
+
+
+def make_csv_features(path):
+  healthy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\healthy"
+  unhealthy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\unhealthy"
+  df = pd.DataFrame([])
+
+  for i in os.listdir(healthy_dir):
+    image = io.imread(os.path.join(healthy_dir, i))[:, :, :3]
+    image = transform.resize(image, (200, 200), anti_aliasing=True)
+
+    colour = make_datasample(image, i)
+    asym = make_datasample_symetry(image, i)
+    df["img_id"] = i 
+    df["colour"] = colour[0]
+    df["asymmetry coef"] = asym[0][0]
+    df["healthy"] = asym[1]
+
+  for i in os.listdir(unhealthy_dir):
+    image = io.imread(os.path.join(unhealthy_dir, i))[:, :, :3]
+    image = transform.resize(image, (200, 200), anti_aliasing=True)
+
+    colour = make_datasample(image, i)
+    asym = make_datasample_symetry(image, i)
+    df["img_id"] = i 
+    df["colour"] = colour[0]
+    df["asymmetry coef"] = asym[0][0]
+    df["healthy"] = asym[1]
+
+  df.to_csv(os.path.join(path, "output.csv"))
+
+
+def compare_models(evals1, evals2, cros1, cros2):
+  fig, axs = plt.subplots(2, 4, figsize=(12, 5))
+  axs = axs.flatten()
+
+  # Histogram for Average Error
+  axs[0].bar("New", evals1[0])
+  axs[0].set_title("Average Error")
+  axs[0].bar("Old", evals2[0])
+  axs[0].set_title("Average Error")
+
+  axs[1].bar("New", evals1[1])
+  axs[1].set_title("Accuracy")
+  axs[1].bar("Old", evals2[1])
+  axs[1].set_title("Accuracy")
+
+  axs[2].bar("New", evals1[2])
+  axs[2].set_title("Precision")
+  axs[2].bar("Old", evals2[2])
+  axs[2].set_title("Precision")
+
+  axs[3].bar("New", evals1[3])
+  axs[3].set_title("F1 Score")
+  axs[3].bar("Old", evals2[3])
+  axs[3].set_title("F1 Score")
+
+  axs[4].bar("New", evals1[4])
+  axs[4].set_title("Recall")
+  axs[4].bar("Old", evals2[4])
+  axs[4].set_title("Recall")
+
+  axs[5].bar("New", evals1[5])
+  axs[5].set_title("AUC")
+  axs[5].bar("Old", evals2[5])
+  axs[5].set_title("AUC")
+
+  axs[6].bar("New", cros1)
+  axs[6].set_title("Cross-Validation")
+  axs[6].bar("Old", cros2)
+  axs[6].set_title("Cross-Validation")
+
+  plt.show()
+
+
+def make_figures_tables(path):
+  final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
+  final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
+
+  make_csv_features(path)
+  select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
+  fig1, evals1, cros1 = best_random_forest(arr_col, 10)
+  fig1.savefig(os.path.join(path, "best_rndF_col.png"))
+  fig11, evals11, cros11 = best_random_forest(arr_cor, 10)
+  fig11.savefig(os.path.join(path, "best_rndF_asym.png"))
+
+  fig2, evals2, cros2 = regular_random_forest(arr_col, 10)
+  fig2.savefig(os.path.join(path, "best_rndF_col_reg.png"))
+  fig22, evals22, cros22 = regular_random_forest(arr_cor, 10)
+  fig22.savefig(os.path.join(path, "best_rndF_asym_reg.png"))
+  
+  compare_models(evals11, evals22, cros11, cros22)
+
+
+make_figures_tables(os.getcwd())
 
 #Running the best random forest for the tuned hyperparameters and evaluating it's scores
-best_random_forest(arr, 10)
-
-
+# best_random_forest(arr, 10)
 

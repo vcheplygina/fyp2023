@@ -719,7 +719,7 @@ def best_random_forest(arr, n_folds):
   
   print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
 
-  return fig
+  return fig, eval_rndF, np.mean(result_rndF)
 
 
 def regular_random_forest(arr, n_folds):
@@ -772,7 +772,7 @@ def regular_random_forest(arr, n_folds):
   
   print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
 
-  return fig
+  return fig, eval_rndF, np.mean(result_rndF)
 
 
 def predict_mask_col(img):
@@ -958,17 +958,67 @@ arr_cor = build_datasample_asym()
 
 # best_random_forest(arr_col, 10)
 
+
+def compare_models(evals1, evals2, cros1, cros2):
+  fig, axs = plt.subplots(2, 4, figsize=(12, 5))
+  axs = axs.flatten()
+
+  # Histogram for Average Error
+  axs[0].bar("New", evals1[0])
+  axs[0].set_title("Average Error")
+  axs[0].bar("Old", evals2[0])
+  axs[0].set_title("Average Error")
+
+  axs[1].bar("New", evals1[1])
+  axs[1].set_title("Accuracy")
+  axs[1].bar("Old", evals2[1])
+  axs[1].set_title("Accuracy")
+
+  axs[2].bar("New", evals1[2])
+  axs[2].set_title("Precision")
+  axs[2].bar("Old", evals2[2])
+  axs[2].set_title("Precision")
+
+  axs[3].bar("New", evals1[3])
+  axs[3].set_title("F1 Score")
+  axs[3].bar("Old", evals2[3])
+  axs[3].set_title("F1 Score")
+
+  axs[4].bar("New", evals1[4])
+  axs[4].set_title("Recall")
+  axs[4].bar("Old", evals2[4])
+  axs[4].set_title("Recall")
+
+  axs[5].bar("New", evals1[5])
+  axs[5].set_title("AUC")
+  axs[5].bar("Old", evals2[5])
+  axs[5].set_title("AUC")
+
+  axs[6].bar("New", cros1)
+  axs[6].set_title("Cross-Validation")
+  axs[6].bar("Old", cros2)
+  axs[6].set_title("Cross-Validation")
+
+  plt.show()
+
+
 def make_figures_tables(path):
-  final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
-  final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
+  # final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
+  # final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
 
-  make_csv_features(path)
-  select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
-  best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col.png"))
-  best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_asym.png"))
+  # make_csv_features(path)
+  # select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
+  # fig1, evals1, cros1 = best_random_forest(arr_col, 10)
+  # fig1.savefig(os.path.join(path, "best_rndF_col.png"))
+  fig11, evals11, cros11 = best_random_forest(arr_cor, 10)
+  # fig11.savefig(os.path.join(path, "best_rndF_asym.png"))
 
-  regular_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col_reg.png"))
-  regular_random_forest(arr_cor, 10).savefig(os.path.join(path, "best_rndF_asym_reg.png"))
+  # fig2, evals2, cros2 = regular_random_forest(arr_col, 10)
+  # fig2.savefig(os.path.join(path, "best_rndF_col_reg.png"))
+  fig22, evals22, cros22 = regular_random_forest(arr_cor, 10)
+  # fig22.savefig(os.path.join(path, "best_rndF_asym_reg.png"))
+  
+  compare_models(evals22, evals11, cros22, cros11)
 
 
 make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
