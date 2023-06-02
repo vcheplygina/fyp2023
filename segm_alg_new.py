@@ -203,7 +203,6 @@ def select_data(new_df):
 df = select_data(make_df())
 print(df)
 
-
 def do_img_segmentation(df):
 
   lst = df["img_id"].tolist()
@@ -404,7 +403,7 @@ def build_datasample():
 
 
 def build_datasample_new():
-  path = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\segmented_photos"
+  path = os.path.join(os.getcwd(), "segmented_photos")
 
   arr = []
 
@@ -670,13 +669,43 @@ def best_random_forest(arr, n_folds):
   
   rndF.fit(train_col, train_lab)
 
-  joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
+  # joblib.dump(rndF, 'C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
 
   score_rndF = rndF.score(test_col, test_lab)
 
   eval_rndF = evaluate(rndF, test_col, test_lab)
+
+  fig, axs = plt.subplots(2, 4, figsize=(12, 5))
+  axs = axs.flatten()
+
+  # Histogram for Average Error
+  axs[0].bar("Average Error", eval_rndF[0])
+  axs[0].set_title(eval_rndF[0])
+
+  axs[1].bar("Accuracy", eval_rndF[1])
+  axs[1].set_title(eval_rndF[1])
+
+  axs[2].bar("Precision", eval_rndF[2])
+  axs[2].set_title(eval_rndF[2])
+
+  axs[3].bar("F1 Score", eval_rndF[3])
+  axs[3].set_title(eval_rndF[3])
+
+  axs[4].bar("Recall", eval_rndF[4])
+  axs[4].set_xlabel(eval_rndF[4])
+
+  axs[5].bar("AUC", eval_rndF[5])
+  axs[5].set_xlabel(eval_rndF[5])
+
+  axs[6].bar("Cross-Validation", np.mean(result_rndF))
+  axs[6].set_xlabel(np.mean(result_rndF))
+  
+  
+  plt.show()
   
   print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
+
+  return fig
 
 
 def predict_mask_col(img):
@@ -855,12 +884,12 @@ def train_test_data(arr):
   plt.legend()
   plt.show()
 
-# arr_col = build_datasample()
-# arr_cor = build_datasample_asym()
+arr_col = build_datasample()
+arr_cor = build_datasample_asym()
 # best_random_forest(arr_cor, 10)
 # best_random_forest(arr_col, 10)
 
-# best_random_forest(arr_col)
+best_random_forest(arr_col, 10)
 
 def make_figures_tables(path):
   final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
@@ -868,8 +897,11 @@ def make_figures_tables(path):
 
   make_csv_features(path)
   select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
+  best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_col.png"))
+  best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_cor.png"))
 
-# make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
+
+make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
 
 def random_search_training(arr):
   x, y = separate_data(arr)
