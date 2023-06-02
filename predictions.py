@@ -5,9 +5,7 @@ from skimage.draw import polygon
 
 
 import joblib
-
-
-import pandas as pd
+import os
 
 
 def do_segm(img):
@@ -103,9 +101,8 @@ def slic_samples(img):
 
 
 
-
 def predict_mask_col(img):
-  rndF = joblib.load('C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_col.pkl')
+  rndF = joblib.load("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_col.pkl")
   image = transform.resize(img, (200, 200), anti_aliasing=True)
 
   col = slic_samples(image)
@@ -116,14 +113,16 @@ def predict_mask_col(img):
                                   (0, common_shape[2] - col.shape[2])], mode='constant')
 
   col = col.ravel()
-  print(col)
   result = rndF.predict([col])
 
   return result
 
 
+print(predict_mask_col(io.imread("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\unhealthy\\PAT_92_141_551.png")))
+
+
 def predict_mask_cor(img):
-  rndF = joblib.load('C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
+  rndF = joblib.load(os.path.join(os.getcwd(), "random_forest_model_cor.pkl"))
   image = transform.resize(img, (200, 200), anti_aliasing=True)
   asym = check_asymmetry(image)
   asym = [asym]
@@ -134,7 +133,7 @@ def predict_mask_cor(img):
 
 
 def predict_img_col(img):
-  rndF = joblib.load('C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_col.pkl')
+  rndF = joblib.load(os.path.join(os.getcwd(), "random_forest_model_col.pkl"))
   img = img[:, :, :3]
   image = do_segm(img)
   plt.imshow(image)
@@ -153,7 +152,7 @@ def predict_img_col(img):
 
 
 def predict_img_cor(img):
-    rndF = joblib.load('C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_cor.pkl')
+    rndF = joblib.load(os.path.join(os.getcwd(), "random_forest_model_cor.pkl"))
     image = do_segm(img)
     asym = check_asymmetry(image)
     asym = [asym]
