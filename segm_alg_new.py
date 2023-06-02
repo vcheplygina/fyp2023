@@ -180,7 +180,7 @@ def img_segm(path, num):
 
 
 def make_df():
-  df = pd.read_csv("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\metadata.csv")
+  df = pd.read_csv("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\metadata.csv")
   new_df = df[["patient_id", "img_id", "diagnostic"]]
 
   new_df["healthy"] = np.where(new_df["diagnostic"] == "NEV", 1, 0) 
@@ -201,7 +201,7 @@ def select_data(new_df):
 
 
 df = select_data(make_df())
-print(df.shape)
+print(df)
 
 
 
@@ -347,7 +347,7 @@ def slic_samples(img):
 
   return color_palette
 
-final_data = select_data(make_df())
+# final_data = select_data(make_df())
 
 def make_datasample_symetry(img, name):
   asym = check_asymmetry(img)
@@ -425,7 +425,7 @@ def build_datasample_asym():
   return arr
 
 
-def make_csv_features():
+def make_csv_features(path):
   healthy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\healthy"
   unhealthy_dir = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\unhealthy"
   df = pd.DataFrame([])
@@ -452,9 +452,7 @@ def make_csv_features():
     df["asymmetry coef"] = asym[0][0]
     df["healthy"] = asym[1]
 
-  df.to_csv("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\output.csv")
-
-make_csv_features()
+  df.to_csv(os.path.join(path, "output.csv"))
 
 
 def separate_data(arr):
@@ -541,7 +539,7 @@ def do_training(X, Y, n_folds):
   return rndF
 
 
-def final_training(arr,   ):
+def final_training(arr, n_folds):
 
   x, y = separate_data(arr)
 
@@ -619,15 +617,12 @@ def final_training(arr,   ):
   axs[5].set_title('AUC')
   axs[5].set_ylabel('Percentage')
 
-  axs[6].bar(models, aucs)
+  axs[6].bar(models, cross_vals)
   axs[6].set_title('Cross-Validation')
   axs[6].set_ylabel('Value')
 
-  # Adjust spacing between subplots
-  plt.tight_layout()
+  return fig
 
-  # Show the histograms
-  plt.show()
 
 
 def best_random_forest(arr, n_folds):
@@ -835,6 +830,16 @@ def train_test_data(arr):
 # arr_cor = build_datasample_asym()
 # best_random_forest(arr_cor, 10)
 # best_random_forest(arr_col, 10)
+
+def make_figures_tables(path):
+  final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
+  final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
+
+  make_csv_features(path)
+  select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
+
+make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
+
 
 def random_search_training(arr):
   x, y = separate_data(arr)
