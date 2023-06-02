@@ -204,8 +204,8 @@ df = select_data(make_df())
 print(df)
 
 
-
 def do_img_segmentation(df):
+
   lst = df["img_id"].tolist()
 
   for i in lst:
@@ -347,7 +347,7 @@ def slic_samples(img):
 
   return color_palette
 
-# final_data = select_data(make_df())
+final_data = select_data(make_df())
 
 def make_datasample_symetry(img, name):
   asym = check_asymmetry(img)
@@ -398,6 +398,36 @@ def build_datasample():
     image = transform.resize(image, (200, 200), anti_aliasing=True)
 
     arr.append(make_datasample(image, i))
+
+  np.random.shuffle(arr)
+  return arr
+
+
+def build_datasample_new():
+  path = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\segmented_photos"
+
+  arr = []
+
+  for i in os.listdir(path):
+    image = io.imread(os.path.join(path, i))
+    image = transform.resize(image, (200, 200), anti_aliasing=True)
+
+    arr.append(make_datasample(image, i))
+
+  np.random.shuffle(arr)
+  return arr
+
+
+def build_datasample_asym_new():
+  path = "C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\segmented_photos"
+
+  arr = []
+
+  for i in os.listdir(path):
+    image = io.imread(os.path.join(path, i))
+    image = transform.resize(image, (200, 200), anti_aliasing=True)
+
+    arr.append(make_datasample_symetry(image, i))
 
   np.random.shuffle(arr)
   return arr
@@ -624,7 +654,6 @@ def final_training(arr, n_folds):
   return fig
 
 
-
 def best_random_forest(arr, n_folds):
   x, y = separate_data(arr)
 
@@ -645,10 +674,10 @@ def best_random_forest(arr, n_folds):
 
   score_rndF = rndF.score(test_col, test_lab)
 
-  evaluate(rndF, test_col, test_lab)
+  eval_rndF = evaluate(rndF, test_col, test_lab)
   
   print(f"Cross-val score for Random Forest {result_rndF.mean()}\t Accuracy for Random Forest {score_rndF}")
-  
+
 
 def predict_mask_col(img):
   rndF = joblib.load('C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\random_forest_model_col.pkl')
@@ -831,6 +860,8 @@ def train_test_data(arr):
 # best_random_forest(arr_cor, 10)
 # best_random_forest(arr_col, 10)
 
+# best_random_forest(arr_col)
+
 def make_figures_tables(path):
   final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
   final_training(arr_cor, 10).savefig(os.path.join(path, "asymmetry_barchart.png"))
@@ -838,8 +869,7 @@ def make_figures_tables(path):
   make_csv_features(path)
   select_data(make_df()).to_csv(os.path.join(path, "train_test_data.csv"))
 
-make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
-
+# make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
 
 def random_search_training(arr):
   x, y = separate_data(arr)
