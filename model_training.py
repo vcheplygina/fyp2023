@@ -21,7 +21,6 @@ import os
 import shutil
 import pandas as pd
 
-np.random.seed(1)
 
 
 
@@ -473,7 +472,7 @@ arr_asym = build_datasample_asym_new()
 
 #Training all the models on color features and outputting the eveluation of each model
 
-#final_training(arr_col, 10)
+final_training(arr_col, 10)
 
 #Training all the models on assymetry features and outputting the eveluation of each model
 
@@ -532,8 +531,8 @@ def build_datasample_asym():
 
 
 
-arr_col = build_datasample()
-arr_cor = build_datasample_asym()
+#arr_col = build_datasample()
+#arr_cor = build_datasample_asym()
 
 
 def make_csv_features(path):
