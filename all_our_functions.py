@@ -180,7 +180,8 @@ def img_segm(path, num):
 
 
 def make_df():
-  path = os.path.join(os.getcwd(), "metadata.csv")
+  # path = os.path.join(os.getcwd(), "metadata.csv")
+  path = os.path.join("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023\\metadata.csv")
   df = pd.read_csv(path)
   new_df = df[["patient_id", "img_id", "diagnostic"]]
 
@@ -404,7 +405,7 @@ def build_datasample():
 
 
 def build_datasample_new():
-  path = os.path.join(os.getcwd(), "segmented_photos")
+  path = os.path.join(os.getcwd(), "fyp2023\\segmented_photos")
   arr = []
 
   for i in os.listdir(path):
@@ -699,6 +700,8 @@ def best_random_forest(arr, n_folds):
 
   axs[6].bar("Cross-Validation", np.mean(result_rndF))
   axs[6].set_xlabel(np.mean(result_rndF))
+
+
   
   
   plt.show()
@@ -885,14 +888,14 @@ def train_test_data(arr):
   plt.show()
 
 arr_col = build_datasample_new()
-arr_col = pd.DataFrame(arr_col)
+# arr_col = pd.DataFrame(arr_col)
 
-print(arr_col)
-# arr_cor = build_datasample_asym()
+# print(arr_col)
+arr_cor = build_datasample_asym()
 # best_random_forest(arr_cor, 10)
 # best_random_forest(arr_col, 10)
 
-best_random_forest(arr_col, 10)
+# best_random_forest(arr_col, 10)
 
 def make_figures_tables(path):
   final_training(arr_col, 10).savefig(os.path.join(path, "colour_barchart.png"))
@@ -904,7 +907,7 @@ def make_figures_tables(path):
   best_random_forest(arr_col, 10).savefig(os.path.join(path, "best_rndF_cor.png"))
 
 
-make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
+# make_figures_tables("C:\\Users\\dubst\\Desktop\\DataScience\\Project 2\\fyp2023")
 
 def random_search_training(arr):
   x, y = separate_data(arr)
@@ -957,9 +960,10 @@ def try_training(arr):
   (train_col, test_col, train_lab, test_lab) = train_test_split(
 	x, y, test_size=0.25, random_state=42) 
 
-  model_knn = KNeighborsClassifier(n_neighbors=3)
+  model_knn = KNeighborsClassifier(n_neighbors=17)
   model_knn.fit(train_col, train_lab)
   acc = model_knn.score(test_col, test_lab)
 
   return acc
 
+print(try_training(arr_col))
